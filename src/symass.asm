@@ -40,6 +40,8 @@
 ;
 ;main program
 ;
+                  * = $c000
+;
                   init = *          ;begin first pass
 ;
                   lda #0
