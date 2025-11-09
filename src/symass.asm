@@ -8,7 +8,11 @@
 ; 6420, 6520, & 6550
 ; a "change/symptr/findptr/,6200-6550"
 ; will do the last 9 mods
-;
+; 
+;--------------------------------------
+; converted to xa65 format by
+; ralph moeritz
+;--------------------------------------
 ;
 ;zero page equates
                   stasrc =$50       ;start of source
@@ -31,7 +35,7 @@
                   t5 = $60
                   flag = $02        ;first or second pass
 ;constants
-                  nops =56         ;number of instructions
+                  nops =56          ;number of instructions
                   ready = $a474     ;basic ready
                   inline = $bdc2    ;print 'in line'
                   contbas = $a7ae   ;continue basic
@@ -40,6 +44,7 @@
 ;
 ;main program
 ;
+                  .word $c000
                   * = $c000
 ;
                   init = *          ;begin first pass
@@ -130,7 +135,7 @@ n1                iny
                   inc ad+1
 n                 jmp getword
 ;
-                  secpass =*       ;begin second pass
+                  secpass =*        ;begin second pass
 ;
                   inc flag
                   ldx #<messsec     ;second pass
@@ -262,9 +267,9 @@ cs5               dey               ;copy symbol name
 ;
                   ldy #0
                   lda (ad),y
-                  cmp #"j"
+                  cmp #"J"
                   beq do3
-                  cmp #"b"
+                  cmp #"B"
                   bne do1
                   cpx #$21          ;brk op#
                   beq do1
@@ -297,7 +302,7 @@ do2               ldy #0
                   iny               ;recognize intended absolute
                   lda (ad),y
                   ldy #7
-                  cmp #"x"
+                  cmp #"X"
                   beq do7
                   iny 
 do7               lda (opptr),y
@@ -515,7 +520,7 @@ hx                jmp last
                   jsr inline
                   jmp listline
 ;
-                  deci =*          ;convert decimal
+                  deci =*           ;convert decimal
 ;
                   lda #0
                   sta t1
@@ -797,10 +802,10 @@ ind2              lda (opptr),y
 ;
                   ldy #0
                   lda (ad),y
-                  cmp #"j"
+                  cmp #"J"
                   bne pop5
                   jmp jump
-pop5              cmp #"b"
+pop5              cmp #"B"
                   bne pop1
                   cpx #$21          ;brk op#
                   beq pop1
@@ -847,7 +852,7 @@ fr                dec len
                   inx 
                   iny 
                   lda (ad),y
-                  cmp #"x"
+                  cmp #"X"
                   beq ab1
                   inx 
 ab1               stx t3
@@ -882,7 +887,7 @@ ab3               ldy t3
                   inc len
 ab                jmp next2
 ;
-                  jump = *          ; jmp, jsr and jmp ()
+                  jump = *          ;jmp, jsr and jmp ()
 ;
                   jsr nextword
                   ldy #0
@@ -950,7 +955,7 @@ w1                lda (ad),y
                   beq w5
                   cmp #";"
                   beq w5
-                  cmp #$b2          ; =
+                  cmp #$b2          ;=
                   beq w5
                   cmp #" "
                   beq w3
@@ -974,10 +979,10 @@ w5                sty len
 ;
                   iny 
                   lda (ad),y
-                  cmp #"b"
+                  cmp #"B"
                   bne cp1
                   jmp byte
-cp1               cmp #"w"
+cp1               cmp #"W"
                   bne cp2
                   jmp byte+2
 cp2               cmp #$c6          ;asc
@@ -986,7 +991,7 @@ cp2               cmp #$c6          ;asc
 cp3               cmp #$80          ;end
                   bne cp4
                   jmp end
-cp4               cmp #"p"
+cp4               cmp #"P"
                   bne cp5
                   jmp pad
 cp5               ldx #<messip      ;illegal
@@ -1109,133 +1114,124 @@ pa1               inc ptr
 ;
                   optab = *         ;opcode table
 ;
-                  .text "lda"
+                  .asc "LDA"
                   .byte $ad,$bd,$b9,$a5,$b5,$fa,$fa,$a9,$a1,$b1
-                  .text "sta"
+                  .asc "STA"
                   .byte $8d,$9d,$99,$85,$95,$fa,$fa,$fa,$81,$91
-                  .text "bne"
+                  .asc "BNE"
                   .byte $d0,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa
-                  .text "beq"
+                  .asc "BEQ"
                   .byte $f0,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa
-                  .text "cmp"
+                  .asc "CMP"
                   .byte $cd,$dd,$d9,$c5,$d5,$fa,$fa,$c9,$c1,$d1
-                  .text "jsr"
+                  .asc "JSR"
                   .byte $20,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa
-                  .text "ldx"
+                  .asc "LDX"
                   .byte $ae,$fa,$be,$a6,$fa,$b6,$fa,$a2,$fa,$fa
-                  .text "rts"
+                  .asc "RTS"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$60,$fa,$fa,$fa
-                  .text "ldy"
+                  .asc "LDY"
                   .byte $ac,$bc,$fa,$a4,$b4,$fa,$fa,$a0,$fa,$fa
-                  .text "bmi"
+                  .asc "BMI"
                   .byte $30,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa
-                  .text "dec"
+                  .asc "DEC"
                   .byte $ce,$de,$fa,$c6,$d6,$fa,$fa,$fa,$fa,$fa
                   .byte $af,0,0,$2d,$3d,$39,$25,$35,$fa,$fa,$29,$21,$31 ;and
-                  .text "bcs"
+                  .asc "BCS"
                   .byte $b0,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa
-                  .text "inc"
+                  .asc "INC"
                   .byte $ee,$fe,$fa,$e6,$f6,$fa,$fa,$fa,$fa,$fa
-                  .text "bcc"
+                  .asc "BCC"
                   .byte $90,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa
-                  .text "tya"
+                  .asc "TYA"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$98,$fa,$fa,$fa
-                  .text "bpl"
+                  .asc "BPL"
                   .byte $10,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa
-                  .text "asl"
+                  .asc "ASL"
                   .byte $0e,$1e,$fa,$06,$16,$fa,$0a,$fa,$fa,$fa
-                  .text "clc"
+                  .asc "CLC"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$18,$fa,$fa,$fa
-                  .text "adc"
+                  .asc "ADC"
                   .byte $6d,$7d,$79,$65,$75,$fa,$fa,$69,$61,$71
-                  .byte $45,$b0,0,$4d,$5d,$59,$45,$55,$fa,$fa,$49,$41,$51                 ;eor
-                  .text "txa"
+                  .byte $45,$b0,0,$4d,$5d,$59,$45,$55,$fa,$fa,$49,$41,$51 ;eor
+                  .asc "TXA"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$8a,$fa,$fa,$fa
-                  .text "cpx"
+                  .asc "CPX"
                   .byte $ec,$fa,$fa,$e4,$fa,$fa,$fa,$e0,$fa,$fa
-                  .text "jmp"
+                  .asc "JMP"
                   .byte $4c,$6c,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa
-                  .text "tax"
+                  .asc "TAX"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$aa,$fa,$fa,$fa
-                  .text "iny"
+                  .asc "INY"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$c8,$fa,$fa,$fa
-                  .text "sty"
+                  .asc "STY"
                   .byte $8c,$fa,$fa,$84,$94,$fa,$fa,$fa,$fa,$fa
-                  .byte $b0,$41,0,$0d,$1d,$19,$05,$15,$fa,$fa,$09,$01,$11                 ;ora
-                  .text "dey"
+                  .byte $b0,$41,0,$0d,$1d,$19,$05,$15,$fa,$fa,$09,$01,$11 ;ora
+                  .asc "DEY"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$88,$fa,$fa,$fa
-                  .text "dex"
+                  .asc "DEX"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$ca,$fa,$fa,$fa
-                  .text "stx"
+                  .asc "STX"
                   .byte $8e,$fa,$fa,$86,$fa,$96,$fa,$fa,$fa,$fa
-                  .text "sbc"
+                  .asc "SBC"
                   .byte $ed,$fd,$f9,$e5,$f5,$fa,$fa,$e9,$e1,$f1
-                  .text "bit"
+                  .asc "BIT"
                   .byte $2c,$fa,$fa,$24,$fa,$fa,$fa,$fa,$fa,$fa
-                  .text "brk"
+                  .asc "BRK"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$00,$fa,$fa,$fa
-                  .text "bvc"
+                  .asc "BVC"
                   .byte $50,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa
-                  .text "bvs"
+                  .asc "BVS"
                   .byte $70,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa,$fa
-                  .text "cld"
+                  .asc "CLD"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$d8,$fa,$fa,$fa
-                  .text "cli"
+                  .asc "CLI"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$58,$fa,$fa,$fa
-                  .text "clv"
+                  .asc "CLV"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$b8,$fa,$fa,$fa
-                  .text "cpy"
+                  .asc "CPY"
                   .byte $cc,$fa,$fa,$c4,$fa,$fa,$fa,$c0,$fa,$fa
-                  .text "inx"
+                  .asc "INX"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$e8,$fa,$fa,$fa
-                  .text "lsr"
+                  .asc "LSR"
                   .byte $4e,$5e,$fa,$46,$56,$fa,$4a,$fa,$fa,$fa
-                  .text "nop"
+                  .asc "NOP"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$ea,$fa,$fa,$fa
-                  .text "pha"
+                  .asc "PHA"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$48,$fa,$fa,$fa
-                  .text "php"
+                  .asc "PHP"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$08,$fa,$fa,$fa
-                  .text "pla"
+                  .asc "PLA"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$68,$fa,$fa,$fa
-                  .text "plp"
+                  .asc "PLP"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$28,$fa,$fa,$fa
-                  .text "rol"
+                  .asc "ROL"
                   .byte $2e,$3e,$fa,$26,$36,$fa,$2a,$fa,$fa,$fa
-                  .byte $52,$b0,0,$6e,$7e,$fa,$66,$76,$fa,$6a,$fa,$fa,$fa                 ;ror
-                  .text "rti"
+                  .byte $52,$b0,0,$6e,$7e,$fa,$66,$76,$fa,$6a,$fa,$fa,$fa ;ror
+                  .asc "RTI"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$40,$fa,$fa,$fa
-                  .text "sec"
+                  .asc "SEC"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$38,$fa,$fa,$fa
-                  .text "sed"
+                  .asc "SED"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$f8,$fa,$fa,$fa
-                  .text "sei"
+                  .asc "SEI"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$78,$fa,$fa,$fa
-                  .text "tay"
+                  .asc "TAY"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$a8,$fa,$fa,$fa
-                  .text "tsx"
+                  .asc "TSX"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$ba,$fa,$fa,$fa
-                  .text "txs"
+                  .asc "TXS"
                   .byte $fa,$fa,$fa,$fa,$fa,$fa,$9a,$fa,$fa,$fa
 ;
 ;symass messages
 ;
-messstar          .text "{rvon}symass 3.10 robert huehn feb 1986"
-                  .byte 13,0
-messfir           .byte 13
-                  .null "first pass..."
-messsec           .null "second pass..."
-messac            .byte 13
-                  .null "assembly complete"
-messsto           .byte 13
-                  .null "symbol table overflow"
-messiq            .byte 13
-                  .null "illegal quantity"
-messus            .byte 13
-                  .null "undefined symbol"
-messboor          .byte 13
-                  .null "branch out of range"
-messim            .byte 13
-                  .null "illegal mode"
-messip            .byte 13
-                  .null "illegal pseudo-op"
+messstar          .asc $12,"SYMASS 3.10 ROBERT HUEHN FEB 1986",$0d,0
+messfir           .asc $0d,"FIRST PASS...",0
+messsec           .asc "SECOND PASS...",0
+messac            .asc $0d,"ASSEMBLY COMPLETE",0
+messsto           .asc $0d,"SYMBOL TABLE OVERFLOW",0
+messiq            .asc $0d,"ILLEGAL QUANTITY",0
+messus            .asc $0d,"UNDEFINED SYMBOL",0
+messboor          .asc $0d,"BRANCH OUT OF RANGE",0
+messim            .asc $0d,"ILLEGAL MODE",0
+messip            .asc $0d,"ILLEGAL PSEUDO-OP",0
